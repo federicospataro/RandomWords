@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect
+from django.template import RequestContext
 from django.http import HttpResponse
 from django.contrib import messages
 import datetime
@@ -31,7 +32,29 @@ def cookies(request):
             return 3
     else:
         return 0
+"""
+def handler404(request, *args, **argv):
 
+    b=cookies(request)
+    if b==0:
+        login=False
+        op=False
+    elif b==1:
+        login=True
+        op=False
+    elif (b==2) or (b==3):
+        login=True
+        op=True
+    elif b==-1:
+        return redirect("/")
+
+    scelte=sceltecategorie()
+
+
+    response = render('404.html', {'login':login,'op':op,'scelte':scelte},context_instance=RequestContext(request))
+    response.status_code = 404
+    return response
+"""
 
 def logout(request):
     if request.COOKIES.get('sessione'):
@@ -561,6 +584,29 @@ def profilo(request,codice,page):
 
 
     return render(request, 'profilo.html',{'login': login,'op':op,'scelte':scelte,'contenuti':contenuti,'utente':utente,'proprio':proprio,'inizio':inizio,'fine':fine,'parametro':str(codice),'listapag':listapag,'pieno':pieno,'pre':pre})
+
+
+def modificaprofilo(request):
+    b=cookies(request)
+    if b==0:
+        login=False
+        op=False
+    elif b==1:
+        login=True
+        op=False
+    elif (b==2) or (b==3):
+        login=True
+        op=True
+    elif b==-1:
+        return redirect("/")
+
+    scelte=sceltecategorie()
+
+    if login==False:
+        return redirect("/")
+
+    return render(request, 'modificaprofilo.html',{'login': login,'op':op,'scelte':scelte})
+
 
 def mioprofilo(request):
     if request.COOKIES.get('sessione'):

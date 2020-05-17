@@ -31,5 +31,6 @@ urlpatterns = [
     path('profilo/', views.mioprofilo,name="mioprofilo"),
     path('profilo/<int:codice>/<int:page>/',views.profilo,name="profilo"),
     path('contenuto/<int:cod>/',views.contenuto,name="contenuto"),
-    path('like/<int:cod>/<int:p>/',views.like,name="like")
+    path('like/<int:cod>/<int:p>/',views.like,name="like"),
+    path('modificaprofilo/',views.modificaprofilo,name="modificaprofilo")
 ]
