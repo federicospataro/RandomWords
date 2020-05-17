@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <title>{% block title %}{% endblock %}</title>
+	<meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+
+  <!-- Bootstrap CSS -->
+  <link href="/static/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+
+  <!-- CSS 2 -->
+  <link href="/static/css/css2.css" rel="stylesheet">
+
+  <link rel="shortcut icon" type="image/png" href="/static/img/favicon.ico"/>
+
+  <style>
+    table {border-collapse:collapse; table-layout:fixed;}
+    table td {word-wrap:break-word;}
+
+    body {
+ background-image: url("/static/img/background.png");
+ background-color: #cccccc;
+}
+    </style>
+ </head>
+<body>
+
+  <!-- Menu in alto --> 
+  <nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-primary fixed-top">
+    <div class="container">
+      <a class="navbar-brand" href="/">Random Words</a>
+      
+      <form action="/cerca/" method="post" class="form-inline my-2 my-lg-0">{% csrf_token %}
+        <input class="form-control mr-sm-2" type="search" placeholder="Cerca Frase..." aria-label="Search" id="testo" name="testo">
+        <select class="form-control" placeholder="aa" id="categoria" name="categoria">
+          <option selected value="100">Qualunque Categoria</option>
+          {% for scelte in scelte %}
+        <option value={{scelte.id}}>{{scelte.nome}}</option>
+        {% endfor %}
+        </select>
+        &nbsp;&nbsp;
+        <button class="btn btn-light my-2 my-sm-0" type="submit">Cerca</button>
+      </form>
+      <div class="collapse navbar-collapse" id="navbarResponsive">
+        <ul class="navbar-nav ml-auto">
+          {% if login and op %}
+          <li class="nav-item">
+            <a class="nav-link text-white" href="/admin">Admin</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link text-white" href="/approva">Approva</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link text-white" href="/pubblica">Pubblica Frase</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link text-white" href="/profilo">Profilo</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link text-white" href="/logout">Logout</a>
+          </li>
+          {% elif login %}
+          <li class="nav-item">
+            <a class="nav-link text-white" href="/pubblica">Pubblica Frase</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link text-white" href="/profilo">Profilo</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link text-white" href="/logout">Logout</a>
+          </li>
+          {% else %}
+          <li class="nav-item">
+            <a class="nav-link text-white" href="/pubblica">Pubblica Frase</a>
+          </li>
+          <li class="nav-item">
+            <a href="/login" type="button" class="btn btn-outline-light">Login</a>
+          </li>
+          {% endif %}
+        </ul>
+      </div>
+    </div>
+  </nav>
+    {% block content %}{% endblock %}
+
+	<!-- Parte bassa -->
+  <footer class="py-5 bg-primary">
+    <div class="container">
+      <p class="m-0 text-center text-white">Copyright &copy; Random Words</p>
+    </div>
+  </footer>
+
+  <!-- Bootstrap JavaScript -->
+  <script src="/static/vendor/jquery/jquery.min.js"></script>
+  <script src="/static/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

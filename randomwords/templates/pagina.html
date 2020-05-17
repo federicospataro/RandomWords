@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+
+{% block title %}Random Words - {{titolo}}{% endblock %}
+{% block content %}
+
+<div class="container">
+
+<br>
+ 
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">
+    <a href="/">Home</a>
+  </li>
+  <li class="breadcrumb-item active">{{titolo}}</li>
+</ol>
+
+<br>
+ 
+
+<center><h3>{{titolo}}</h3>
+  {% if testocerca %}
+  <h7 class="text-muted">{{testocerca}}</h7>
+  {% endif %}
+</center>
+<br>
+
+
+{% for contenuti in contenuti %}
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">{{contenuti.titolo}}</h5>
+          {% if contenuti.booleanlink %}
+          <a href="{{contenuti.autorelink}}" class="card-subtitle mb-2 text-muted">Da {{contenuti.autore}}</a>
+          {% else %}
+          <a class="card-subtitle mb-2 text-muted">Da {{contenuti.autore}}</a>
+          {% endif %}
+          <p class="card-text">{{contenuti.frase}}</p>
+          <a class="card-subtitle mb-2 text-muted">{{contenuti.data}} {{contenuti.categoria}} &nbsp;&nbsp;&nbsp;&nbsp;</a>
+          <a href="{{contenuti.likelink}}"><img src={% if contenuti.likeb %}"/static/img/like2.png"{% else %}"/static/img/like1.png"{% endif %} href="#"  height="50" width="50"></a>
+          <a class="card-link"><a class="text-danger">{{contenuti.like}} Mi piace</a></a>
+          <a href="{{contenuti.commenta}}" class="card-link">&nbsp;&nbsp;&nbsp;&nbsp;Commenta →</a>
+        </div>
+      </div>
+      <br>
+      {% endfor %}
+
+<br>
+<br>
+<br>  
+<nav aria-label="Paginazione">
+  <ul class="pagination justify-content-center pagination-lg">
+    {% if inizio %}
+    <li class="page-item">
+      {% else %}
+      <li class="page-item disabled">
+        {% endif %}
+      <a class="page-link" href="/pagina/{{parametro}}/{{inizio}}" aria-label="Previous">
+        <span aria-hidden="true">&laquo;</span>
+        <span class="sr-only">Precedente</span>
+      </a>
+    </li>
+    {% for listapag in listapag %}
+    {% if listapag.attuale %}
+    <li class="page-item active"><a class="page-link" href="/pagina/{{parametro}}/{{listapag.pag}}">{{listapag.pag}}</a></li>
+    {% else %}
+    <li class="page-item"><a class="page-link" href="/pagina/{{parametro}}/{{listapag.pag}}">{{listapag.pag}}</a></li>
+    {% endif %}
+    {% endfor %}
+    {% if fine %}
+    <li class="page-item">
+      {% else %}
+      <li class="page-item disabled">
+        {% endif %}
+      <a class="page-link" href="/pagina/{{parametro}}/{{fine}}" aria-label="Next">
+        <span aria-hidden="true">&raquo;</span>
+        <span class="sr-only">Successivo</span>
+      </a>
+    </li>
+  </ul>
+</nav>
+<br>
+<br>
+<br>
+
+
+</div>
+
+
+
+{% endblock %}

@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+
+{% block title %}Random Words - Home{% endblock %}
+{% block content %}
+
+<br>
+
+
+
+<div class="container">
+
+<center>
+
+  {% if messages %}
+  {% for msg in messages %}
+    <div class="alert alert-info alert-dismissable">
+      <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+      {{msg.message}}
+    </div>
+  {% endfor %}
+{% endif %}
+
+<h1>Random Words</h1>
+<h4>Il miglior posto dove esprimere i pensieri.</h4>
+</center>
+
+<br>
+<hr>
+
+<div class="card text-white bg-primary mb-3">
+  <div class="card-body">
+    <center><h2><b>Frase del giorno</b></h2></center>
+  </div>
+  <br>
+  <div class="container-fluid">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title text-dark">{{estratta.titolo}}</h5>
+        {% if estratta.booleanlink %}
+        <a href="{{estratta.autorelink}}" class="card-subtitle mb-2 text-muted">Da {{estratta.autore}}</a>
+        {% else %}
+        <a class="card-subtitle mb-2 text-muted">Da {{estratta.autore}}</a>
+        {% endif %}
+        <p class="card-text text-dark">{{estratta.frase}}</p>
+        <a class="card-subtitle mb-2 text-muted">{{estratta.data}} {{estratta.categoria}} &nbsp;&nbsp;&nbsp;&nbsp;</a>
+        <a href="{{estratta.likelink}}"><img src={% if estratta.likeb %}"/static/img/like2.png"{% else %}"/static/img/like1.png"{% endif %} href="#"  height="50" width="50"></a>
+        <a class="card-link"><a class="text-danger">{{estratta.like}} Mi piace</a></a>
+        <a href="{{estratta.commenta}}" class="card-link">&nbsp;&nbsp;&nbsp;&nbsp;Commenta →</a>
+      </div>
+    </div>
+</div>
+<br>
+</div>
+  
+  <hr>
+  <br>
+
+  <div class="card bg-light mb-3">
+    <div class="card-header"><h3>Recenti</h3></div>
+    <div class="card-body">
+      {% for recenti in recenti %}
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">{{recenti.titolo}}</h5>
+          {% if recenti.booleanlink %}
+          <a href="{{recenti.autorelink}}" class="card-subtitle mb-2 text-muted">Da {{recenti.autore}}</a>
+          {% else %}
+          <a class="card-subtitle mb-2 text-muted">Da {{recenti.autore}}</a>
+          {% endif %}
+          <p class="card-text">{{recenti.frase}}</p>
+          <a class="card-subtitle mb-2 text-muted">{{recenti.data}} {{recenti.categoria}} &nbsp;&nbsp;&nbsp;&nbsp;</a>
+          <a href="{{recenti.likelink}}"><img src={% if recenti.likeb %}"/static/img/like2.png"{% else %}"/static/img/like1.png"{% endif %} href="#"  height="50" width="50"></a>
+          <a class="card-link"><a class="text-danger">{{recenti.like}} Mi piace</a></a>
+          <a href="{{recenti.commenta}}" class="card-link">&nbsp;&nbsp;&nbsp;&nbsp;Commenta →</a>
+        </div>
+      </div>
+      <br>
+      {% endfor %}
+    </div>
+    <div class="card-footer text-muted">
+      <a href="/pagina/recenti/1" class="text-right">Vedi tutti →</a>
+    </div>
+  </div>
+
+  <br>
+
+  <div class="card bg-light mb-3">
+    <div class="card-header"><h3>Più Mi piace</h3></div>
+    <div class="card-body">
+      {% for piulike in piulike %}
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">{{piulike.titolo}}</h5>
+          {% if piulike.booleanlink %}
+          <a href="{{piulike.autorelink}}" class="card-subtitle mb-2 text-muted">Da {{piulike.autore}}</a>
+          {% else %}
+          <a class="card-subtitle mb-2 text-muted">Da {{piulike.autore}}</a>
+          {% endif %}
+          <p class="card-text">{{piulike.frase}}</p>
+          <a class="card-subtitle mb-2 text-muted">{{piulike.data}} {{piulike.categoria}} &nbsp;&nbsp;&nbsp;&nbsp;</a>
+          <a href="{{piulike.likelink}}"><img src={% if piulike.likeb %}"/static/img/like2.png"{% else %}"/static/img/like1.png"{% endif %} href="#"  height="50" width="50"></a>
+          <a class="card-link"><a class="text-danger">{{piulike.like}} Mi piace</a></a>
+          <a href="{{piulike.commenta}}" class="card-link">&nbsp;&nbsp;&nbsp;&nbsp;Commenta →</a>
+        </div>
+      </div>
+      <br>
+      {% endfor %}
+    </div>
+    <div class="card-footer text-muted">
+      <a href="/pagina/piulike/1" class="text-right">Vedi tutti →</a>
+    </div>
+  </div>
+  <br>
+  <br>
+
+  <br>
+</div>
+
+
+  </div>
+  </center>
+
+
+{% endblock %}

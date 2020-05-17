@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block title %}Random Words - Registrati{% endblock %}
+{% block content %}
+
+<div class="container">
+
+<br>
+ 
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">
+    <a href="/">Home</a>
+  </li>
+  <li class="breadcrumb-item">
+    <a href="/login">Login</a>
+  </li>
+  <li class="breadcrumb-item active">Registrati</li>
+</ol>
+
+<br>
+
+<center>
+
+  {% if messages %}
+  {% for msg in messages %}
+    <div class="alert alert-danger alert-dismissable">
+      <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+      {{msg.message}}
+    </div>
+  {% endfor %}
+{% endif %}
+
+  <div class="card" style="width: 30rem;">
+    <div class="card-body">
+      <h5 class="card-title"><h3>Registrazione</h3></h5>
+      Inserisci i dati richiesti per creare un account
+      <br>
+      <br>
+      <form action="" method="post">
+        {% csrf_token %}
+        <input type="email" class="form-control" id="email" name="email" maxlength="30"  placeholder="Email">
+        <br>
+        <input type="text" class="form-control" id="nickname" name="nickname" maxlength="20"  placeholder="Nickname">
+        <br>
+        <input type="password" class="form-control" id="password" name="password" maxlength="20" placeholder="Password">
+        <br>
+        <input type="password" class="form-control" id="confermapassword" name="confermapassword" maxlength="20" placeholder="Conferma Password">
+        <br>
+        <br>
+        <button type="submit" class="btn btn-primary">Crea Account</button>
+      </form>
+    </div>
+  </div>
+
+
+</center>
+
+<br>
+<br>
+<br>  
+
+
+</div>
+
+
+
+{% endblock %}

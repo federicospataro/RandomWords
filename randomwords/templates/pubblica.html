@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+
+{% block title %}Random Words - Pubblica{% endblock %}
+{% block content %}
+
+<div class="container">
+
+<br>
+ 
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">
+    <a href="/">Home</a>
+  </li>
+  <li class="breadcrumb-item active">Pubblica</li>
+</ol>
+
+<br>
+
+
+
+  {% if messages %}
+  {% for msg in messages %}
+    <div class="alert alert-danger alert-dismissable">
+      <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+      {{msg.message}}
+    </div>
+  {% endfor %}
+{% endif %}
+
+
+<center><h3>Pubblica una Frase</h3>
+<h7>Inserisci la tua frase nel campo sottostante e premi il pulsante invia.<br>
+  Successivamente, il contenuto passerà attraverso un processo di revisione e, se verrà approvato, sarà pubblico nella piattaforma!
+</h7></center>
+<br>
+<br>
+  <form action="" method="post">
+    {% csrf_token %}
+    {% if scadenza %}
+    <div class="form-group">
+      <label><h5>Autore</h5></label>
+      <div>
+        <select class="form-control" id="autore" name="autore" disabled>
+          {% if nome %}
+          <option value="1">{{nome}}</option>
+          {% endif %}
+          <option value="2">Anonimo</option>
+        </select>
+      </div>
+    </div>
+    <br>
+    <div class="form-group">
+      <label for="titolo"><h5>Titolo</h5></label>
+      <input maxlength="20" class="form-control" id="titolo" name="titolo" placeholder="Inserisci il titolo della frase" disabled></input>
+    </div>
+    <br>
+    <div class="form-group">
+      <label for="contenuto"><h5>Frase</h5></label>
+      <textarea maxlength="500" class="form-control" id="contenuto" name="contenuto" rows="4" placeholder="Inserisci frase..." disabled></textarea>
+    </div>
+    <br>
+    <button type="submit" class="btn btn-primary" disabled>Invia</button>
+    {% else %}
+    <div class="form-group">
+      <label><h5>Autore</h5></label>
+      <div>
+        <select class="form-control" id="autore" name="autore">
+          {% if nome %}
+          <option value="1">{{nome}}</option>
+          {% endif %}
+          <option value="2">Anonimo</option>
+        </select>
+      </div>
+    </div>
+    <br>
+    <div class="form-group">
+      <label for="titolo"><h5>Titolo</h5></label>
+      <input maxlength="20" class="form-control" id="titolo" name="titolo" placeholder="Inserisci il titolo della frase"></input>
+    </div>
+    <br>
+    <div class="form-group">
+      <label for="contenuto"><h5>Frase</h5></label>
+      <textarea maxlength="500" class="form-control" id="contenuto" name="contenuto" rows="4" placeholder="Inserisci frase..."></textarea>
+    </div>
+    <br>
+    <button type="submit" class="btn btn-primary">Invia</button>
+    {% endif %}
+  </form>
+
+
+
+
+<br>
+<br>
+<br>  
+
+
+</div>
+
+
+
+{% endblock %}

@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+{% block title %}Random Words - Contenuto{% endblock %}
+{% block content %}
+
+<div class="container">
+
+<br>
+ 
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">
+    <a href="/">Home</a>
+  </li>
+  <li class="breadcrumb-item active">Contenuto</li>
+</ol>
+
+{% if pre %}
+<br>
+<font size="+2">
+<a href="{{pre}}">&laquo; Indietro</a>
+</font>
+<br>
+{% endif %}
+
+  {% if messages %}
+  {% for msg in messages %}
+    <div class="alert alert-danger alert-dismissable">
+      <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+      {{msg.message}}
+    </div>
+  {% endfor %}
+{% endif %}
+
+<center>
+<font size="+2">
+  <h1>{{conte.titolo}}</h1>
+  {% if conte.booleanlink %}
+  <a href="{{conte.autorelink}}" class="card-subtitle mb-2 text-muted">Da {{conte.autore}}</a>
+  {% else %}
+  <a class="mb-2 text-muted">Da {{conte.autore}}</a>
+  {% endif %}
+  <p>{{conte.frase}}</p>
+  <a class="mb-2 text-muted">{{conte.data}} {{conte.categoria}} &nbsp;&nbsp;&nbsp;&nbsp;</a>
+  <a href="{{conte.likelink}}"><img src={% if conte.likeb %}"/static/img/like2.png"{% else %}"/static/img/like1.png"{% endif %} href="#"  height="50" width="50"></a>
+  <a class="text-danger">{{conte.like}} Mi piace</a>
+</font>
+</center>
+
+<hr>
+<form action="" method="post" class="input-group-prepend">{% csrf_token %}
+  <input maxlength="100" class="form-control" id="testo" name="testo" placeholder="Inserisci Commento...">
+  <button type="submit" class="btn btn-primary">Invia</button>
+</form>
+<br>
+
+{% for commenti in commenti %}
+<a href="{{commenti.autorelink}}" class="text-dark"><b>{{commenti.autore}}</b></a>&nbsp;&nbsp;<a class="text-muted">{{commenti.data}}</a>
+{% if commenti.booleandel %}
+<form action="" method="post">{% csrf_token %}
+<button type="submit" class="btn btn-danger float-right" name="delete" value="{{commenti.delname}}">X</button>
+</form>
+{% endif %}
+<p>{{commenti.testo}}</p>
+
+<hr>
+{% endfor %}
+
+<br>
+<br>
+<br>
+<br>
+<br>  
+
+
+</div>
+
+
+
+{% endblock %}

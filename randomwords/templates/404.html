@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}Random Words - 404{% endblock %}
+{% block content %}
+
+  <!-- Contenuto della pagina -->
+  <div class="container">
+
+    <h1 class="mt-4 mb-3">404
+      <small>Pagina non Trovata</small>
+    </h1>
+
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item">
+        <a href="/">Home</a>
+      </li>
+      <li class="breadcrumb-item active">404</li>
+    </ol>
+
+    <div class="jumbotron">
+      <h1 class="display-1">404</h1>
+      <p>La pagina che stai cercando non è stata trovata. Ecco alcuni link che ti possono aiutare:</p>
+      <ul>
+        <li>
+          <a href="/">Home</a>
+        </li>
+      </ul>
+    </div>
+
+  </div>
+  {% endblock %}

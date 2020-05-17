@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block title %}Random Words - Approva{% endblock %}
+{% block content %}
+
+<div class="container">
+
+<br>
+ 
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">
+    <a href="/">Home</a>
+  </li>
+  <li class="breadcrumb-item active">Approva</li>
+</ol>
+
+<br>
+
+
+
+  {% if messages %}
+  {% for msg in messages %}
+    <div class="alert alert-danger alert-dismissable">
+      <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+      {{msg.message}}
+    </div>
+  {% endfor %}
+{% endif %}
+
+
+<center><h3>Sezione Approvazione</h3>
+<h7>Per approvare un contenuto, se ritenuto pertinente, clicca sul tasto "Approva". Altrimenti, rifiuta!<br>(Se decidi di approvare, prima seleziona la categoria del contenuto)<br><br>
+</h7>
+<br>
+<br>
+<br>
+  
+<table class="table">
+  <thead>
+    <tr>
+      <th scope="col" style="width: 5%">#</th>
+      <th scope="col" style="width: 15%">Autore</th>
+      <th scope="col" style="width: 10%">Titolo</th>
+      <th scope="col" style="width: 30%">Frase</th>
+      <th scope="col" style="width: 20%">Categoria</th>
+      <th scope="col" style="width: 10%">Approva</th>
+      <th scope="col" style="width: 10%">Rifiuta</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for frasi in frasi %}
+    <tr>
+      <form action="" method="post">
+        {% csrf_token %}
+      <th scope="row">{{frasi.id}}</th>
+      <td>{{frasi.autore}}</td>
+      <td>{{frasi.titolo}}</td>
+      <td>{{frasi.frase}}</td>
+      <td><select class="form-control" id="cate" name="cate">
+        <option value=-1>-</option>
+        {% for scelte in scelte %}
+        <option value={{scelte.id}}>{{scelte.nome}}</option>
+        {% endfor %}
+      </select></td>
+      <td><button type="submit" class="btn btn-success" value={{frasi.id}} name="approva">Approva</button></td>
+      <td><button type="submit" class="btn btn-secondary" value={{frasi.id}} name="rifiuta">Rifiuta</button></td>
+      </form>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+</center>
+
+<br>
+<br>
+<br>
+<br>
+<br>  
+
+
+</div>
+
+
+
+{% endblock %}
