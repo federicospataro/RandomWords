@@ -189,13 +189,22 @@ def index(request):
             ip = x_forwarded_for.split(',')[0]
         else:
             ip = request.META.get('REMOTE_ADDR')
+
+        while True:
+            cod=secrets.token_hex(8)
+            querya=Sessione.objects.filter(Cod_Sessio=cod)
+            if len(querya)==0:
+                break
+        
         query=Sessione.objects.filter(ip=ip)
         a=query[0]
-        cod=a.Cod_Sessio
+        timestamppost=a.timestamp_post
+        timestampcommento=a.timestamp_commento
         query2=Utente.objects.filter(nickname="Anonimo")
         utente=query2[0]
-        a.Cod_Utente=utente
-        a.save()
+        
+        s=Sessione(Cod_Sessio=cod,ip=ip,timestamp_post=timestamppost,Cod_Utente=utente,timestamp_commento=timestampcommento)
+        s.save()
 
     scelte=sceltecategorie()
 
