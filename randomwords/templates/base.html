@@ -40,7 +40,7 @@ footer {
     <div class="container">
       <a class="navbar-brand" href="/">Random Words</a>
       
-      <form action="/cerca/" method="post" class="form-inline my-2 my-lg-0">{% csrf_token %}
+      <form action="/cerca/" method="post" class="form-inline my-2 my-sm-0">{% csrf_token %}
         <input class="form-control mr-sm-2" type="search" placeholder="Cerca Frase..." aria-label="Search" id="testo" name="testo">
         <select class="form-control" placeholder="aa" id="categoria" name="categoria">
           <option selected value="100">Qualunque Categoria</option>
