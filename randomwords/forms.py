@@ -47,3 +47,7 @@ class Cerca(forms.Form):
 
 class Commentoform(forms.Form):
     testo=forms.CharField(label='Testo',required=True,max_length=100)
+
+class Modifica(forms.Form):
+    descrizione=forms.CharField(label='descrizione',required=True,max_length=200)
+    nickname=forms.CharField(label='descrizione',required=True,max_length=30)

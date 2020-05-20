@@ -10,7 +10,7 @@ import secrets
 import time
 import random
 
-from .forms import Registrazione, Login, Pubblica, Approva, Cerca, Commentoform
+from .forms import Registrazione, Login, Pubblica, Approva, Cerca, Commentoform, Modifica
 from .models import Utente, Contenuto, Like, Sessione, Commento, Categoria, Giorno
 
 # Create your views here.
@@ -62,7 +62,7 @@ def handler404(request, *args, **argv):
     scelte=sceltecategorie()
 
 
-    response = render('404.html', {'login':login,'op':op,'scelte':scelte},context_instance=RequestContext(request))
+    response = render(request,'404.html', {'login':login,'op':op,'scelte':scelte},context_instance=RequestContext(request))
     response.status_code = 404
     return response
 
@@ -543,7 +543,7 @@ def profilo(request,codice,page):
 
     try:
         pre=request.META['HTTP_REFERER']
-        if pre==request.build_absolute_uri():
+        if (pre==request.build_absolute_uri()) or ('modifica' in pre):
             pre=False
     except:
         pre=False
@@ -650,12 +650,44 @@ def modificaprofilo(request):
     elif b==-2:
         return redirect("/")
 
-    scelte=sceltecategorie()
-
     if login==False:
         return redirect("/")
 
-    return render(request, 'modificaprofilo.html',{'login': login,'op':op,'scelte':scelte})
+    forminvio=Modifica()
+    scelte=sceltecategorie()
+
+    cooki=request.COOKIES.get('sessione')
+    query=Sessione.objects.filter(Cod_Sessio=cooki)
+    utente=query[0].Cod_Utente
+
+    nickname=utente.nickname
+    descrizione=utente.descrizione
+    print(descrizione)
+
+    if request.method == 'POST':
+        form = Modifica(request.POST)
+        if (form.is_valid()):
+            nicknuovo=form.cleaned_data['nickname']
+            descrizione=form.cleaned_data['descrizione']
+
+            if nicknuovo!=nickname:
+                query=Utente.objects.filter(nickname=nicknuovo)
+                if len(query)==0:
+                    utente.nickname=nicknuovo
+                    utente.descrizione=descrizione
+                    utente.save()
+                    return redirect("/profilo")
+                else:
+                    messages.success(request, 'Nickname già in uso')
+            else:
+                utente.nickname=nicknuovo
+                utente.descrizione=descrizione
+                utente.save()
+                return redirect("/profilo")
+        else:
+            messages.success(request, 'Inserisci tutti i campi richiesti')
+
+    return render(request, 'modificaprofilo.html',{'login': login,'op':op,'scelte':scelte,'nickname':nickname,'descrizione':descrizione})
 
 
 def mioprofilo(request):

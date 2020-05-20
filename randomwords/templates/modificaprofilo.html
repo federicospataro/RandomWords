@@ -12,12 +12,44 @@
   <li class="breadcrumb-item">
     <a href="/">Home</a>
   </li>
+  <li class="breadcrumb-item">
+    <a href="/profilo">Profilo</a>
+  </li>
   <li class="breadcrumb-item active">Modifica Profilo</li>
 </ol>
 
 
-<br>
+<br><center>
 
+  {% if messages %}
+  {% for msg in messages %}
+    <div class="alert alert-danger alert-dismissable">
+      <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+      {{msg.message}}
+    </div>
+  {% endfor %}
+{% endif %}
+
+<div class="card" style="width: 30rem;">
+  <div class="card-body">
+    <h5 class="card-title"><h3>Modifica il tuo Profilo</h3></h5>
+    Inserisci/Modifica le informazioni del tuo profilo
+    <br>
+    <br>
+    <form action="" method="post">
+      {% csrf_token %}
+      <b>Nickname</b>
+      <input type="text" maxlength="30" class="form-control" value="{{nickname}}" id="nickname" name="nickname" maxlength="30"  placeholder="Nickname">
+      <br>
+      <br>
+      <b>Descrizione</b>
+      <input type="text" maxlength="200" class="form-control" id="descrizione" name="descrizione" maxlength="20"  placeholder="Descrizione" value="{{descrizione}}">
+      <br>
+      <br>
+      <button type="submit" class="btn btn-primary">Invia Modifiche</button>
+    </form>
+  </div>
+</div></center>
 
 
 
