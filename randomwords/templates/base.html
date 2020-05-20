@@ -35,11 +35,11 @@ footer {
  </head>
 <body>
 
-  <!-- Menu in alto --> 
-  <nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-primary fixed-top">
+  <!-- Menu in alto -->
+  <nav class="navbar navbar-inverse navbar-fixed-top navbar-dark bg-primary">
     <div class="container">
       <a class="navbar-brand" href="/">Random Words</a>
-      
+
       <form action="/cerca/" method="post" class="form-inline my-2 my-sm-0">{% csrf_token %}
         <input class="form-control mr-sm-2" type="search" placeholder="Cerca Frase..." aria-label="Search" id="testo" name="testo">
         <select class="form-control" placeholder="aa" id="categoria" name="categoria">
