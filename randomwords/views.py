@@ -31,8 +31,17 @@ def cookies(request):
         elif query[0].Cod_Utente.permesso==2:
             return 3
     else:
-        return 0
-"""
+        x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+        if x_forwarded_for:
+            ip = x_forwarded_for.split(',')[0]
+        else:
+            ip = request.META.get('REMOTE_ADDR')
+
+        query=Sessione.objects.filter(ip=ip)
+        if len(query)==0:
+            return 0
+        return -2
+
 def handler404(request, *args, **argv):
 
     b=cookies(request)
@@ -47,6 +56,8 @@ def handler404(request, *args, **argv):
         op=True
     elif b==-1:
         return redirect("/")
+    elif b==-2:
+        return redirect("/")
 
     scelte=sceltecategorie()
 
@@ -54,7 +65,7 @@ def handler404(request, *args, **argv):
     response = render('404.html', {'login':login,'op':op,'scelte':scelte},context_instance=RequestContext(request))
     response.status_code = 404
     return response
-"""
+
 
 def logout(request):
     if request.COOKIES.get('sessione'):
@@ -168,16 +179,30 @@ def index(request):
         login=True
         op=True
     elif b==-1:
-        response=render(request, 'index.html',{'login': False,'op':False})
-        response.set_cookie(key='sessione',value='a',max_age=0)
-        return response
+        login=False
+        op=False
+    elif b==-2:
+        login=False
+        op=False
+        x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+        if x_forwarded_for:
+            ip = x_forwarded_for.split(',')[0]
+        else:
+            ip = request.META.get('REMOTE_ADDR')
+        query=Sessione.objects.filter(ip=ip)
+        a=query[0]
+        cod=a.Cod_Sessio
+        query2=Utente.objects.filter(nickname="Anonimo")
+        utente=query2[0]
+        a.Cod_Utente=utente
+        a.save()
+
+    scelte=sceltecategorie()
 
     estratta=estrazione(request,login)
 
     query=Contenuto.objects.order_by('-data') \
         .filter(approvato=1)
-
-    scelte=sceltecategorie()
 
     recenti=listeindex(query,2,request,login)
 
@@ -205,6 +230,14 @@ def index(request):
     #print(conto)
     piulike=listeindex(contenuti,2,request,login)
 
+    if b==-1:
+        response=render(request, 'index.html',{'login': login,'op':op,'recenti':recenti,'piulike':piulike,'scelte':scelte,'estratta':estratta})
+        response.set_cookie(key='sessione',value='a',max_age=0)
+        return response
+    elif b==-2:
+        response=render(request, 'index.html',{'login': login,'op':op,'recenti':recenti,'piulike':piulike,'scelte':scelte,'estratta':estratta})
+        response.set_cookie(key='sessione',value=cod,max_age=365*24*60*60)
+        return response
 
     return render(request, 'index.html',{'login': login,'op':op,'recenti':recenti,'piulike':piulike,'scelte':scelte,'estratta':estratta})
 
@@ -234,6 +267,8 @@ def pagina(request,parametro,page):
         login=True
         op=True
     elif b==-1:
+        return redirect("/")
+    elif b==-2:
         return redirect("/")
 
     scelte=sceltecategorie()
@@ -386,6 +421,8 @@ def contenuto(request,cod):
         op=True
     elif b==-1:
         return redirect("/")
+    elif b==-2:
+        return redirect("/")
 
     try:
         pre=request.META['HTTP_REFERER']
@@ -489,6 +526,8 @@ def profilo(request,codice,page):
         login=True
         op=True
     elif b==-1:
+        return redirect("/")
+    elif b==-2:
         return redirect("/")
 
     scelte=sceltecategorie()
@@ -599,6 +638,8 @@ def modificaprofilo(request):
         op=True
     elif b==-1:
         return redirect("/")
+    elif b==-2:
+        return redirect("/")
 
     scelte=sceltecategorie()
 
@@ -624,12 +665,14 @@ def approva(request):
     if request.COOKIES.get('sessione'):
         cook=request.COOKIES.get('sessione')
         query=Sessione.objects.filter(Cod_Sessio=cook)
-        if query[0].Cod_Utente.nickname=="Anonimo":
+        if len(query)==0:
+            return redirect("/")
+        elif query[0].Cod_Utente.nickname=="Anonimo":
             return redirect("/")
         elif query[0].Cod_Utente.permesso==0:
             return redirect("/")
     else:
-        redirect("/")
+        return redirect("/")
 
     forminvio=Approva()
 
@@ -644,6 +687,8 @@ def approva(request):
         login=True
         op=True
     elif b==-1:
+        return redirect("/")
+    elif b==-2:
         return redirect("/")
 
     
@@ -711,6 +756,8 @@ def pubblica(request):
         op=True
     elif b==-1:
         return redirect("/")
+    elif b==-2:
+        return redirect("/")
 
     scelte=sceltecategorie()
 
@@ -772,9 +819,16 @@ def pubblica(request):
                     query=Sessione.objects.filter(Cod_Sessio=cod)
                     if len(query)==0:
                         break
+
+                x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+                if x_forwarded_for:
+                    ip = x_forwarded_for.split(',')[0]
+                else:
+                    ip = request.META.get('REMOTE_ADDR')
+
                 query=Utente.objects.filter(nickname="Anonimo")
                 utente=query[0]
-                s=Sessione(Cod_Sessio=cod,timestamp_post=int(timestamp),Cod_Utente=utente,timestamp_commento=0)
+                s=Sessione(Cod_Sessio=cod,ip=ip,timestamp_post=int(timestamp),Cod_Utente=utente,timestamp_commento=0)
                 s.save()
                 messages.success(request, 'Contenuto inviato correttamente!')
                 response=redirect('/')
@@ -818,7 +872,14 @@ def login(request):
                     query=Sessione.objects.filter(Cod_Sessio=cod)
                     if len(query)==0:
                         break
-                s=Sessione(Cod_Sessio=cod,timestamp_post=0,Cod_Utente=codiceutente,timestamp_commento=0)
+
+                x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+                if x_forwarded_for:
+                    ip = x_forwarded_for.split(',')[0]
+                else:
+                    ip = request.META.get('REMOTE_ADDR')
+                
+                s=Sessione(Cod_Sessio=cod,ip=ip,timestamp_post=0,Cod_Utente=codiceutente,timestamp_commento=0)
                 s.save()
                 messages.success(request, 'Login effettuato correttamente!')
                 response=redirect('/')

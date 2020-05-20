@@ -37,6 +37,7 @@ class Sessione(models.Model):
     def __str__(self):
         return self.Cod_Sessio
     Cod_Sessio=models.CharField(max_length=20,primary_key=True)
+    ip=models.CharField(max_length=20,default="")
     timestamp_post=models.IntegerField()
     timestamp_commento=models.IntegerField(default=0)
     Cod_Utente = models.ForeignKey(Utente, on_delete=models.CASCADE)
