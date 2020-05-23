@@ -93,7 +93,7 @@ def sceltecategorie():
             scelte.append(info)
 
     return scelte
-        
+
 
 def listeindex(query,limite,request,login):
     recenti=[]
@@ -108,7 +108,7 @@ def listeindex(query,limite,request,login):
             booleanlink=False
         ap=True
         if query[i].approvato==1:
-            ap=False 
+            ap=False
 
         like=True
         likelink=""
@@ -141,7 +141,7 @@ def listeindex(query,limite,request,login):
         recenti.append(info)
         if i>=limite:
             break
-    
+
     return recenti
 
 
@@ -186,9 +186,6 @@ def regole(request):
     return render(request, 'regole.html',{'login': login,'op':op,'scelte':scelte})
 
 def index(request):
-    return HttpResponse("ciao")
-
-def indexx(request):
 
     b=cookies(request)
     if b==0:
@@ -217,14 +214,14 @@ def indexx(request):
             querya=Sessione.objects.filter(Cod_Sessio=cod)
             if len(querya)==0:
                 break
-        
+
         query=Sessione.objects.filter(ip=ip)
         a=query[0]
         timestamppost=a.timestamp_post
         timestampcommento=a.timestamp_commento
         query2=Utente.objects.filter(nickname="Anonimo")
         utente=query2[0]
-        
+
         s=Sessione(Cod_Sessio=cod,ip=ip,timestamp_post=timestamppost,Cod_Utente=utente,timestamp_commento=timestampcommento)
         s.save()
 
@@ -391,7 +388,7 @@ def pagina(request,parametro,page):
 
     if check==0:
         return redirect("/pagina/"+parametro+"/1")
-    
+
     if int(page)==int(listapag[0]['pag']):
         inizio=False
     else:
@@ -436,9 +433,9 @@ def like(request,cod,p):
         if len(query3)!=0:
             a=query3[0]
             a.delete()
-    
+
     return redirect(pre)
-        
+
 
 
 def contenuto(request,cod):
@@ -531,7 +528,7 @@ def contenuto(request,cod):
             utente=Sessione.objects.filter(Cod_Sessio=cooki)[0].Cod_Utente
             if (query[i].Cod_Utente.Cod_Utente==utente.Cod_Utente) or (op==True):
                 booleandel=True
-            
+
         info = {
             "autore": query[i].Cod_Utente.nickname,
             "testo": query[i].testo,
@@ -544,7 +541,7 @@ def contenuto(request,cod):
 
 
     return render(request, 'contenuto.html',{'login': login,'op':op,'form':forminvio,'scelte':scelte,'conte':conte,'commenti':commenti,'pre':pre})
-    
+
 
 
 def profilo(request,codice,page):
@@ -585,7 +582,7 @@ def profilo(request,codice,page):
         desc="(Non impostata)"
     else:
         desc=query[0].descrizione
-    
+
     utente = {
             "nickname": query[0].nickname,
             "email": query[0].email,
@@ -609,7 +606,7 @@ def profilo(request,codice,page):
     i=0
     lista=[]
     for i in range(len(query)):
-        if query[i].Cod_Utente.Cod_Utente==int(codice):    
+        if query[i].Cod_Utente.Cod_Utente==int(codice):
             lista.append(query[i])
 
     contenuti=listeindex(lista,99999,request,login)
@@ -758,7 +755,7 @@ def approva(request):
     elif b==-2:
         return redirect("/")
 
-    
+
     scelte=[]
     query=Categoria.objects.all()
     i=0
@@ -843,7 +840,7 @@ def pubblica(request):
             messages.success(request, 'Puoi inviare una frase ogni 30 minuti! Mancano '+str(30-minuti)+' minuti.')
             scadenza=True
         else:
-            scadenza=False        
+            scadenza=False
     else:
         nome=False
         scadenza=False
@@ -943,7 +940,7 @@ def account(request,cod):
                 ip = x_forwarded_for.split(',')[0]
             else:
                 ip = request.META.get('REMOTE_ADDR')
-                
+
             s=Sessione(Cod_Sessio=cod,ip=ip,timestamp_post=0,Cod_Utente=utente,timestamp_commento=0)
             s.save()
             response=redirect('/cambiopassword')
@@ -975,7 +972,7 @@ def password(request):
 
     if login==False:
         return redirect("/")
-    
+
     scelte=sceltecategorie()
 
     if request.method == 'POST':
@@ -983,7 +980,7 @@ def password(request):
         if form.is_valid():
             password=form.cleaned_data['password']
             confermapassword=form.cleaned_data['confermapassword']
-            
+
             if len(password)<4:
                 messages.success(request, 'La Password deve essere di almeno 4 caratteri')
             elif password!=confermapassword:
@@ -1012,7 +1009,7 @@ def password(request):
     return render(request, 'password.html',{'login':login,'op': op,'scelte':scelte})
 
 def recupero(request):
-    if cookies(request)!=0: 
+    if cookies(request)!=0:
         return redirect('/')
 
     scelte=sceltecategorie()
@@ -1081,7 +1078,7 @@ def login(request):
                     ip = x_forwarded_for.split(',')[0]
                 else:
                     ip = request.META.get('REMOTE_ADDR')
-                
+
                 s=Sessione(Cod_Sessio=cod,ip=ip,timestamp_post=0,Cod_Utente=codiceutente,timestamp_commento=0)
                 s.save()
                 messages.success(request, 'Login effettuato correttamente!')
@@ -1113,7 +1110,7 @@ def registrati(request):
             nickname=form.cleaned_data['nickname']
             password=form.cleaned_data['password']
             confermapassword=form.cleaned_data['confermapassword']
-            
+
             if password!=confermapassword:
                 messages.success(request, 'Password e Conferma password devono combaciare')
             elif len(password)<4:
@@ -1144,4 +1141,3 @@ def registrati(request):
             messages.success(request, 'Inserisci tutti i campi richiesti')
 
     return render(request, 'registrati.html', {'form': forminvio,'scelte':scelte,'done':done})
-
