@@ -34,6 +34,7 @@
   <div class="card" style="width: 30rem;">
     <div class="card-body">
       <h5 class="card-title"><h3>Registrazione</h3></h5>
+      {% if done %}
       Inserisci i dati richiesti per creare un account
       <br>
       <br>
@@ -50,8 +51,13 @@
         <br>
         <button type="submit" class="btn btn-primary">Crea Account</button>
       </form>
+      {% else %}
+      <br>Registrazione effettuata.<br>Per attivare il tuo account, segui le indicazioni che sonoo state inviate<br>al tuo indirizzo email<br>
+      <br>
+      {% endif %}
     </div>
   </div>
+  <br><br>
 
 
 </center>

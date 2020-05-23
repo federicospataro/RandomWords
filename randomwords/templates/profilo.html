@@ -15,6 +15,17 @@
   <li class="breadcrumb-item active">Profilo</li>
 </ol>
 
+<center>
+{% if messages %}
+  {% for msg in messages %}
+    <div class="alert alert-info alert-dismissable">
+      <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+      {{msg.message}}
+    </div>
+  {% endfor %}
+{% endif %}
+</center>
+
 {% if pre %}
 <br>
 <font size="+2">
@@ -43,6 +54,8 @@
     <br>
     <br>
     <a href="/modificaprofilo" class="text-right">Modifica Profilo →</a>
+    <br>
+    <a href="/cambiopassword" class="text-right">Cambio Password →</a>
     {% endif %}
   </div>
 </div>

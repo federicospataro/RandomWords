@@ -31,6 +31,11 @@ footer {
     bottom: 0;
     width: 100%;
 }
+
+ul {
+    text-align: center;
+    list-style-position: inside;
+}
     </style>
  </head>
 <body>
@@ -38,7 +43,7 @@ footer {
   <!-- Menu in alto -->
   <nav class="navbar navbar-inverse navbar-fixed-top navbar-expand-sm navbar-dark bg-primary fixed-top">
     <div class="container">
-      <a class="navbar-brand" href="/">Random Words</a>
+      <a class="navbar-brand" href="/">Random Words</a><br>
 
       <form action="/cerca/" method="post" class="form-inline my-2 my-sm-0">{% csrf_token %}
         <input class="form-control mr-sm-2" type="search" placeholder="Cerca Frase..." aria-label="Search" id="testo" name="testo">
@@ -51,9 +56,13 @@ footer {
         &nbsp;&nbsp;
         <button class="btn btn-light my-2 my-sm-0" type="submit">Cerca</button>
       </form>
+      <br>
       <div class="collapse navbar-collapse" id="navbarResponsive">
         <ul class="navbar-nav ml-auto">
           {% if login and op %}
+          <li class="nav-item">
+            <a class="nav-link text-white" href="/regole">Regole</a>
+          </li>
           <li class="nav-item">
             <a class="nav-link text-white" href="/admin">Admin</a>
           </li>
@@ -71,6 +80,9 @@ footer {
           </li>
           {% elif login %}
           <li class="nav-item">
+            <a class="nav-link text-white" href="/regole">Regole</a>
+          </li>
+          <li class="nav-item">
             <a class="nav-link text-white" href="/pubblica">Pubblica Frase</a>
           </li>
           <li class="nav-item">
@@ -80,6 +92,9 @@ footer {
             <a class="nav-link text-white" href="/logout">Logout</a>
           </li>
           {% else %}
+          <li class="nav-item">
+            <a class="nav-link text-white" href="/regole">Regole</a>
+          </li>
           <li class="nav-item">
             <a class="nav-link text-white" href="/pubblica">Pubblica Frase</a>
           </li>

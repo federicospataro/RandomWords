@@ -12,7 +12,10 @@
   <li class="breadcrumb-item">
     <a href="/">Home</a>
   </li>
-  <li class="breadcrumb-item active">Login</li>
+  <li class="breadcrumb-item">
+    <a href="/login">Login</a>
+  </li>
+  <li class="breadcrumb-item active">Recupero Password</li>
 </ol>
 
 <br>
@@ -21,7 +24,7 @@
 
   {% if messages %}
   {% for msg in messages %}
-    <div class="alert alert-info alert-dismissable">
+    <div class="alert alert-danger alert-dismissable">
       <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
       {{msg.message}}
     </div>
@@ -30,24 +33,26 @@
 
   <div class="card" style="width: 30rem;">
     <div class="card-body">
-      <h5 class="card-title"><h3>Login</h3></h5>
-      Effettua il login per commentare, mettere mi piace e renderti visibile all'interno della community!
+      <h5 class="card-title"><h3>Recupero Password</h3></h5>
+      {% if done %}
+      Inserisci la tua mail per procedere
+      <br>
       <br>
       <br>
       <form action="" method="post">
         {% csrf_token %}
         <input type="email" class="form-control" id="email" name="email"  placeholder="Email">
         <br>
-        <input type="password" class="form-control" id="password" name="password" placeholder="Password">
-        <br>
-        <a href="/login/recupero">Ho dimenticato la password</a><br>
-        <a class="text-muted">Non sei registrato? <a href="/login/registrati">Crea un Account</a></a>
-        <br>
         <br>
         <button type="submit" class="btn btn-primary">Invia</button>
       </form>
+      {% else %}
+      <br><br>E' stata inviata una email al tuo indirizzo<br><br>
+      Segui le indicazioni in essa riportate per recuperare la password<br><br>
+      {% endif %}
     </div>
   </div>
+  <br>
 
 
 </center>

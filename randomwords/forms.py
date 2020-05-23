@@ -5,11 +5,18 @@ class Registrazione(forms.Form):
     nickname=forms.CharField(label='nickname', max_length=20,required=True)
     email=forms.EmailField(required=True)
     password=forms.CharField(widget=forms.PasswordInput(),required=True)
-    confermapassword=forms.CharField(widget=forms.PasswordInput())
+    confermapassword=forms.CharField(widget=forms.PasswordInput(),required=True)
 
 class Login(forms.Form):
     email=forms.EmailField(required=True)
     password=forms.CharField(widget=forms.PasswordInput(),required=True)
+
+class Recupero(forms.Form):
+    email=forms.EmailField(required=True)
+
+class Cambio(forms.Form):
+    password=forms.CharField(widget=forms.PasswordInput(),required=True)
+    confermapassword=forms.CharField(widget=forms.PasswordInput(),required=True)
 
 class Pubblica(forms.Form):
     scelte = (

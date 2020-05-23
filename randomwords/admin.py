@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Utente, Contenuto, Like, Sessione, Commento, Categoria, Giorno
+from .models import Utente, Contenuto, Like, Sessione, Commento, Categoria, Giorno, Token
 
 # Register your models here.
 
@@ -11,3 +11,4 @@ admin.site.register(Commento)
 admin.site.register(Sessione)
 admin.site.register(Categoria)
 admin.site.register(Giorno)
+admin.site.register(Token)

@@ -8,6 +8,7 @@ class Utente(models.Model):
     def __str__(self):
         return self.nickname
     Cod_Utente=models.AutoField(primary_key=True)
+    verificato=models.IntegerField(default=0)
     nickname=models.CharField(max_length=30)
     password=models.CharField(max_length=70)
     email=models.CharField(max_length=30)
@@ -64,3 +65,11 @@ class Giorno(models.Model):
     Cod_Estrazione=models.AutoField(primary_key=True)
     data=models.DateTimeField(auto_now_add=True)
     Cod_Cont = models.ForeignKey(Contenuto, on_delete=models.CASCADE)
+
+class Token(models.Model):
+    def __str__(self):
+        return self.codice
+    codice=models.CharField(max_length=20,primary_key=True)
+    tipo=models.IntegerField()
+    data=models.DateTimeField(auto_now_add=True)
+    Cod_Utente = models.ForeignKey(Utente, on_delete=models.CASCADE,default=0)

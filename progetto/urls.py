@@ -32,5 +32,9 @@ urlpatterns = [
     path('profilo/<int:codice>/<int:page>/',views.profilo,name="profilo"),
     path('contenuto/<int:cod>/',views.contenuto,name="contenuto"),
     path('like/<int:cod>/<int:p>/',views.like,name="like"),
-    path('modificaprofilo/',views.modificaprofilo,name="modificaprofilo")
+    path('modificaprofilo/',views.modificaprofilo,name="modificaprofilo"),
+    path('account/<str:cod>/',views.account,name="account"),
+    path('login/recupero',views.recupero,name="recupero"),
+    path('cambiopassword/',views.password,name="password"),
+    path('regole/',views.regole,name="regole")
 ]

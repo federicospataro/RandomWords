@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.template import RequestContext
 from django.http import HttpResponse
 from django.contrib import messages
+from django.core.mail import send_mail
 import datetime
 from django.db.models import Q
 from django.urls import resolve
@@ -10,8 +11,8 @@ import secrets
 import time
 import random
 
-from .forms import Registrazione, Login, Pubblica, Approva, Cerca, Commentoform, Modifica
-from .models import Utente, Contenuto, Like, Sessione, Commento, Categoria, Giorno
+from .forms import Registrazione, Login, Pubblica, Approva, Cerca, Commentoform, Modifica, Recupero, Cambio
+from .models import Utente, Contenuto, Like, Sessione, Commento, Categoria, Giorno, Token
 
 # Create your views here.
 
@@ -164,9 +165,30 @@ def estrazione(request,login):
     dare=listeindex([estratto],2,request,login)
     return dare[0]
 
+def regole(request):
+    b=cookies(request)
+    if b==0:
+        login=False
+        op=False
+    elif b==1:
+        login=True
+        op=False
+    elif (b==2) or (b==3):
+        login=True
+        op=True
+    elif b==-1:
+        return redirect("/")
+    elif b==-2:
+        return redirect("/")
 
+    scelte=sceltecategorie()
+
+    return render(request, 'regole.html',{'login': login,'op':op,'scelte':scelte})
 
 def index(request):
+    return HttpResponse("ciao")
+
+def indexx(request):
 
     b=cookies(request)
     if b==0:
@@ -209,6 +231,8 @@ def index(request):
     scelte=sceltecategorie()
 
     estratta=estrazione(request,login)
+
+    #send_mail('subject', 'body of the message', 'randomwordsnoreply@gmail.com', ['fede.spata23@gmail.com',])
 
     query=Contenuto.objects.order_by('-data') \
         .filter(approvato=1)
@@ -676,6 +700,7 @@ def modificaprofilo(request):
                     utente.nickname=nicknuovo
                     utente.descrizione=descrizione
                     utente.save()
+                    messages.success(request, 'Informazioni modificate con successo')
                     return redirect("/profilo")
                 else:
                     messages.success(request, 'Nickname già in uso')
@@ -683,6 +708,7 @@ def modificaprofilo(request):
                 utente.nickname=nicknuovo
                 utente.descrizione=descrizione
                 utente.save()
+                messages.success(request, 'Informazioni modificate con successo')
                 return redirect("/profilo")
         else:
             messages.success(request, 'Inserisci tutti i campi richiesti')
@@ -880,6 +906,142 @@ def pubblica(request):
 
     return render(request, 'pubblica.html',{'form': forminvio,'login':login,'op':op,'nome':nome,'scadenza':scadenza,'scelte':scelte})
 
+
+def account(request,cod):
+
+    query=Token.objects.filter(codice=cod)
+    if len(query)==0:
+        return redirect("/")
+
+    toke=query[0]
+
+    if toke.data.date()!=datetime.datetime.now().date():
+        return redirect("/")
+
+    utente=toke.Cod_Utente
+
+    if toke.tipo==0:
+        if request.COOKIES.get('sessione'):
+            c=request.COOKIES.get('sessione')
+            query=Sessione.objects.filter(Cod_Sessio=c)
+            if len(query)==0:
+                return redirect("/")
+            a=query[0]
+            a.Cod_Utente=utente
+            a.save()
+            toke.delete()
+            return redirect('/cambiopassword')
+        else:
+            while True:
+                cod=secrets.token_hex(8)
+                query=Sessione.objects.filter(Cod_Sessio=cod)
+                if len(query)==0:
+                    break
+
+            x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+            if x_forwarded_for:
+                ip = x_forwarded_for.split(',')[0]
+            else:
+                ip = request.META.get('REMOTE_ADDR')
+                
+            s=Sessione(Cod_Sessio=cod,ip=ip,timestamp_post=0,Cod_Utente=utente,timestamp_commento=0)
+            s.save()
+            response=redirect('/cambiopassword')
+            response.set_cookie(key='sessione',value=cod,max_age=365*24*60*60)
+            toke.delete()
+            return response
+    elif toke.tipo==1:
+        utente.verificato=1
+        utente.save()
+        toke.delete()
+        messages.success(request, 'Account attivato, ora puoi fare il login!')
+        return redirect("/login")
+
+def password(request):
+    b=cookies(request)
+    if b==0:
+        login=False
+        op=False
+    elif b==1:
+        login=True
+        op=False
+    elif (b==2) or (b==3):
+        login=True
+        op=True
+    elif b==-1:
+        return redirect("/")
+    elif b==-2:
+        return redirect("/")
+
+    if login==False:
+        return redirect("/")
+    
+    scelte=sceltecategorie()
+
+    if request.method == 'POST':
+        form = Cambio(request.POST)
+        if form.is_valid():
+            password=form.cleaned_data['password']
+            confermapassword=form.cleaned_data['confermapassword']
+            
+            if len(password)<4:
+                messages.success(request, 'La Password deve essere di almeno 4 caratteri')
+            elif password!=confermapassword:
+                messages.success(request, 'Password e Confermapassword devono essere uguali')
+            else:
+                p=hashlib.sha256(password.encode()).hexdigest()
+
+                c=request.COOKIES.get('sessione')
+                query=Sessione.objects.filter(Cod_Sessio=c)
+                a=query[0]
+                utente=a.Cod_Utente
+                utente.password=p
+                utente.save()
+
+                querya=Utente.objects.filter(nickname="Anonimo")
+                an=querya[0]
+                querys=Sessione.objects.filter(Cod_Utente=utente)
+                i=0
+                for i in range(len(querys)):
+                    querys[i].Cod_Utente=an
+                messages.success(request, 'Password cambiata con successo')
+                return redirect("/profilo")
+        else:
+            messages.success(request, 'Inserisci tutte le informazioni richieste')
+
+    return render(request, 'password.html',{'login':login,'op': op,'scelte':scelte})
+
+def recupero(request):
+    if cookies(request)!=0: 
+        return redirect('/')
+
+    scelte=sceltecategorie()
+    done=True
+
+    if request.method == 'POST':
+        form = Recupero(request.POST)
+        if form.is_valid():
+            email=form.cleaned_data['email']
+            queryu=Utente.objects.filter(email=email)
+            if len(queryu)!=1:
+                messages.success(request, 'Email non trovata')
+            else:
+                while True:
+                    cod=secrets.token_hex(9)
+                    query1=Token.objects.filter(codice=cod)
+                    if len(query1)==0:
+                        break
+                utente=queryu[0]
+                a=Token(codice=cod,Cod_Utente=utente,tipo=0)
+                a.save()
+                link="http://"+request.build_absolute_uri().split("/")[2]+"/account/"+cod
+                send_mail('Recupero Password RandomWords', 'Per cambiare la password, clicca su questo link (disponibile solo per oggi):\n\n'+link, 'randomwordsnoreply@gmail.com', [email,])
+                done=False
+        else:
+            messages.success(request, 'Inserisci tutti i campi richiesti')
+
+    return render(request, 'recupero.html', {'scelte':scelte,'done':done})
+
 def login(request):
 
     if cookies(request)!=0:
@@ -894,7 +1056,7 @@ def login(request):
             email=form.cleaned_data['email']
             password=form.cleaned_data['password']
             p=hashlib.sha256(password.encode()).hexdigest()
-            query = Utente.objects.filter( password=p ) & Utente.objects.filter( email=email )
+            query = Utente.objects.filter( password=p ) & Utente.objects.filter( email=email ) & Utente.objects.filter( verificato=1 )
             if len(query)!=1:
                 messages.success(request, 'Email o password errati')
                 return render(request, 'login.html', {'form': forminvio})
@@ -929,8 +1091,8 @@ def login(request):
 
         else:
             messages.success(request, 'Inserisci tutti i campi richiesti')
-            return render(request, 'login.html', {'form': forminvio})
-        return render(request, 'login.html', {'form': forminvio})
+            return render(request, 'login.html', {'form': forminvio,'scelte':scelte})
+        return render(request, 'login.html', {'form': forminvio,'scelte':scelte})
     else:
         return render(request, 'login.html', {'form': forminvio,'scelte':scelte})
 
@@ -940,6 +1102,8 @@ def registrati(request):
         return redirect('/')
 
     scelte=sceltecategorie()
+
+    done=True
 
     forminvio=Registrazione()
     if request.method == 'POST':
@@ -951,26 +1115,33 @@ def registrati(request):
             confermapassword=form.cleaned_data['confermapassword']
             
             if password!=confermapassword:
-                messages.success(request, 'Password e Confermapassword devono essere uguali')
-                return render(request, 'registrati.html', {'form': forminvio})
+                messages.success(request, 'Password e Conferma password devono combaciare')
             elif len(password)<4:
                 messages.success(request, 'La password deve essere di minimo 4 caratteri')
-                return render(request, 'registrati.html', {'form': forminvio})
             else:
                 query = Utente.objects.filter( nickname=nickname ) | Utente.objects.filter( email=email )
                 if len(query)!=0:
                     messages.success(request, 'Email o nickname già in uso')
-                    return render(request, 'registrati.html', {'form': forminvio})
+                else:
+                    p=hashlib.sha256(password.encode()).hexdigest()
+                    u=Utente(nickname=nickname,email=email,password=p,permesso=0,verificato=0)
+                    u.save()
 
-                p=hashlib.sha256(password.encode()).hexdigest()
-                u=Utente(nickname=nickname,email=email,password=p,permesso=0)
-                u.save()
-                messages.success(request, 'Registrazione effettuata, ora puoi fare il login!')
-                return redirect('login')
+                    while True:
+                        cod=secrets.token_hex(9)
+                        query1=Token.objects.filter(codice=cod)
+                        if len(query1)==0:
+                            break
+                    utente=u
+                    a=Token(codice=cod,Cod_Utente=utente,tipo=1)
+                    a.save()
+
+                    link="http://"+request.build_absolute_uri().split("/")[2]+"/account/"+cod
+                    send_mail('Attivazione Account RandomWords', 'Per attivare il tuo account, clicca su questo link (disponibile solo per oggi):\n\n'+link, 'randomwordsnoreply@gmail.com', [email,])
+
+                    done=False
         else:
             messages.success(request, 'Inserisci tutti i campi richiesti')
-            return render(request, 'registrati.html', {'form': forminvio})
 
-    else:
-        return render(request, 'registrati.html', {'form': forminvio,'scelte':scelte})
+    return render(request, 'registrati.html', {'form': forminvio,'scelte':scelte,'done':done})
 
