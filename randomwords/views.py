@@ -14,7 +14,7 @@ import random
 from .forms import Registrazione, Login, Pubblica, Approva, Cerca, Commentoform, Modifica, Recupero, Cambio
 from .models import Utente, Contenuto, Like, Sessione, Commento, Categoria, Giorno, Token
 
-# Create your views here.
+# Create your views here. upgrade heroku 22 fatto
 
 
 def cookies(request):
@@ -466,7 +466,7 @@ def contenuto(request,cod):
     scelte=sceltecategorie()
 
     query=Contenuto.objects.filter(Cod_Cont=int(cod))
-
+    
     conte=listeindex(query,2,request,login)[0]
 
     admin=False
